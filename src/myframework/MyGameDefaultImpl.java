@@ -1,6 +1,10 @@
-package gameframework.game;
+package myframework;
 
 import gameframework.base.ObservableValue;
+import gameframework.game.CanvasDefaultImpl;
+import gameframework.game.Game;
+import gameframework.game.GameLevel;
+import gameframework.game.GameLevelDefaultImpl;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -24,9 +28,9 @@ import javax.swing.JPanel;
 /**
  * Create a basic game application with menus and displays of lives and score
  */
-public class GameDefaultImpl implements Game, Observer {
+public class MyGameDefaultImpl implements Game, Observer {
 	protected static final int NB_ROWS = 31;
-	protected static final int NB_COLUMNS = 28;
+	protected static final int NB_COLUMNS = 56; /* CHANGEMENT DE LA LARGEUR DE LA MAP POUR UN JEUX PLUS AGREABLE A JOUER */
 	protected static final int SPRITE_SIZE = 16;
 	public static final int MAX_NUMBER_OF_PLAYER = 4;
 	public static final int NUMBER_OF_LIVES = 3;
@@ -34,12 +38,13 @@ public class GameDefaultImpl implements Game, Observer {
 	protected CanvasDefaultImpl defaultCanvas = null;
 	protected ObservableValue<Integer> score[] = new ObservableValue[MAX_NUMBER_OF_PLAYER];
 	protected ObservableValue<Integer> life[] = new ObservableValue[MAX_NUMBER_OF_PLAYER];
+	protected ObservableValue<String> timer_obs[] = new ObservableValue[MAX_NUMBER_OF_PLAYER];
 
 	// initialized before each level
 	protected ObservableValue<Boolean> endOfGame = null;
 
 	private Frame f;
-	private GameLevelDefaultImpl currentPlayedLevel = null;
+	private MyGameLevelDefaultImpl currentPlayedLevel = null;
 
 	protected int levelNumber;
 	protected ArrayList<GameLevel> gameLevels;
@@ -50,15 +55,19 @@ public class GameDefaultImpl implements Game, Observer {
 	protected Label lifeValue, scoreValue;
 	protected Label currentLevel;
 	protected Label currentLevelValue;
+	protected Label timer;
+	protected Label timerValue;
 
-	public GameDefaultImpl() {
+	public MyGameDefaultImpl() {
 		for (int i = 0; i < MAX_NUMBER_OF_PLAYER; ++i) {
 			score[i] = new ObservableValue<Integer>(0);
 			life[i] = new ObservableValue<Integer>(3);
+			timer_obs[i] = new ObservableValue<String>("3:00");
 		}
 		
 		lifeText = new Label("Lives:");
 		scoreText = new Label("Score:");
+		timer = new Label("Time Left:"); /*AJOUT D'UN TIMER*/
 		information = new Label("State:");
 		informationValue = new Label("Playing");
 		currentLevel = new Label("Level:");
@@ -147,8 +156,11 @@ public class GameDefaultImpl implements Game, Observer {
 		lifeValue = new Label(Integer.toString(life[0].getValue()));
 		scoreValue = new Label(Integer.toString(score[0].getValue()));
 		currentLevelValue = new Label(Integer.toString(levelNumber));
+		timerValue = new Label(timer_obs[0].getValue());
 		c.add(lifeText);
 		c.add(lifeValue);
+		c.add(timer);
+		c.add(timerValue);
 		c.add(scoreText);
 		c.add(scoreValue);
 		c.add(currentLevel);
@@ -166,6 +178,7 @@ public class GameDefaultImpl implements Game, Observer {
 		for (int i = 0; i < MAX_NUMBER_OF_PLAYER; ++i) {
 			score[i].addObserver(this);
 			life[i].addObserver(this);
+			timer_obs[i].addObserver(this);
 			life[i].setValue(3);
 			score[i].setValue(0);
 		}
@@ -178,7 +191,7 @@ public class GameDefaultImpl implements Game, Observer {
 					currentPlayedLevel.interrupt();
 					currentPlayedLevel = null;
 				}
-				currentPlayedLevel = (GameLevelDefaultImpl) level;
+				currentPlayedLevel = (MyGameLevelDefaultImpl) level;
 				levelNumber++;
 				currentLevelValue.setText(Integer.toString(levelNumber));
 				currentPlayedLevel.start();
@@ -214,6 +227,10 @@ public class GameDefaultImpl implements Game, Observer {
 	public ObservableValue<Integer>[] life() {
 		return life;
 	}
+	
+	public ObservableValue<String>[] timer_obs() {
+		return timer_obs;
+	}
 
 	public ObservableValue<Boolean> endOfGame() {
 		return endOfGame;
@@ -248,6 +265,11 @@ public class GameDefaultImpl implements Game, Observer {
 							.setText(Integer
 									.toString(((ObservableValue<Integer>) o)
 											.getValue()));
+				}
+			}
+			for (ObservableValue<String> timeObservable : timer_obs) {
+				if(o == timeObservable) {
+					timerValue.setText(((ObservableValue<String>) o).getValue());
 				}
 			}
 		}

@@ -4,7 +4,6 @@ import gameframework.base.MoveStrategyKeyboard;
 import gameframework.base.MoveStrategyRandom;
 import gameframework.game.CanvasDefaultImpl;
 import gameframework.game.Game;
-import gameframework.game.GameLevelDefaultImpl;
 import gameframework.game.GameMovableDriverDefaultImpl;
 import gameframework.game.GameUniverseDefaultImpl;
 import gameframework.game.GameUniverseViewPortDefaultImpl;
@@ -16,6 +15,7 @@ import gameframework.game.OverlapProcessorDefaultImpl;
 import java.awt.Canvas;
 import java.awt.Point;
 
+import myframework.MyGameLevelDefaultImpl;
 import soldiers.entity.ArmedUnitSoldier;
 import soldiers.entity.ArmedUnitSquad;
 import soldiers.entity.Health;
@@ -31,7 +31,7 @@ import soldiers.rule.SoldiersOverlapRules;
 import soldiers.utils.AgeFactory;
 import soldiers.utils.MiddleAgeFactory;
 
-public class GameLevelOne extends GameLevelDefaultImpl {
+public class GameLevelOne extends MyGameLevelDefaultImpl {
 	Canvas canvas;
 
 	// 0 : ; 1 : Walls; 2 : Neutral Infantrymen; 3 : Health; 4 : ; 5 : empty
