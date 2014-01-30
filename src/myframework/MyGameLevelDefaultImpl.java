@@ -35,8 +35,8 @@ public abstract class MyGameLevelDefaultImpl extends Thread implements GameLevel
 		this.life = g.life();
 		this.timer_obs = ((MyGameDefaultImpl)g).timer_obs();
 		this.timer = new Date();
-		this.minutes = 2;
-		this.seconds = 59;
+		this.minutes = 0;
+		this.seconds = 0;
 	}
 
 	@Override
@@ -63,15 +63,16 @@ public abstract class MyGameLevelDefaultImpl extends Thread implements GameLevel
 			universe.allOneStepMoves();
 			universe.processAllOverlaps();
 			if(i%9==0){
-				timer_obs[0].setValue(String.valueOf(minutes)+":"+String.valueOf(seconds-1));
-				seconds--;
-				if(seconds == 0){
-					minutes--;
-					seconds = 59;
+				if(seconds < 10)
+					timer_obs[0].setValue(String.valueOf(minutes)+":0"+String.valueOf(seconds+1));
+				else
+					timer_obs[0].setValue(String.valueOf(minutes)+":0"+String.valueOf(seconds+1));
+				seconds++;
+				if(seconds ==59){
+					minutes++;
+					seconds = 0;
 				}
-				}
-				if(minutes == 0 && seconds == 1)
-					end();
+			}
 			try {
 				long sleepTime = MINIMUM_DELAY_BETWEEN_GAME_CYCLES
 						- (new Date().getTime() - start);

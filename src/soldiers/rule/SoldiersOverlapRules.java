@@ -20,6 +20,8 @@ import soldiers.entity.SoldierAbstract;
 import soldiers.entity.Sword;
 import soldiers.entity.TeleportPairOfPoints;
 import soldiers.utils.MiddleAgeFactory;
+import soldiers.utils.VisitorClassicCounter;
+import soldiers.utils.VisitorClassicForArmedUnit;
 import soldiers.weapon.SoldierArmed;
 import soldiers.weapon.SoldierWithShield;
 import soldiers.weapon.SoldierWithSword;
@@ -42,8 +44,8 @@ public class SoldiersOverlapRules extends OverlapRulesApplierDefaultImpl {
 	private int totalNbSoldiers = 8;
 	private int nbKilledSoldiers = 0;
 	private int nbDefeatedArmies = 0;
-	private int totalNbArmies = 7;
-	private int nbLives = 3;
+	private int totalNbArmies = 13;
+	private float nbLives = 300;
 
 	Canvas defaultCanvas;
 
@@ -124,14 +126,20 @@ public class SoldiersOverlapRules extends OverlapRulesApplierDefaultImpl {
 			System.out.println("CONGRATULATIONS, YOU WON!");
 			endOfGame.setValue(true);
 		}
-		if(a.getName().equals("My Team "))
-			endOfGame.setValue(true);
+		//if(a.getName().equals("My Team "))
+		//	endOfGame.setValue(true);
 			
 	}
 	
 	public void overlapRule(ArmedUnitSquad a, InfantryMan s) {
-		if(a.getName().equals("My Team "))
+		if(a.getName().equals("My Team ")){
+			VisitorClassicCounter nbSoldiers = new VisitorClassicCounter();
+			a.accept(nbSoldiers);
+			nbLives = a.getHealthPoints();
+			System.out.println(nbLives);
+			setLife((int) nbLives);
 			score.setValue(score.getValue() + 1);
+		}
 		System.out.println(a.getName() + "Recruiting Soldiers");
 		if(s.belongToArmy == false){
 			ArmedUnitSoldier recruit = new ArmedUnitSoldier(new MiddleAgeFactory(), "Simple", "rookie", this.defaultCanvas);
@@ -141,6 +149,12 @@ public class SoldiersOverlapRules extends OverlapRulesApplierDefaultImpl {
 	}
 	
 	public void overlapRule(ArmedUnitSquad a, Horseman h) {
+		if(a.getName().equals("My Team ")){
+			nbLives = a.getHealthPoints();
+			System.out.println(nbLives);
+			setLife((int) nbLives);
+			score.setValue(score.getValue() + 1);
+		}
 		System.out.println(a.getName() + "Recruiting Soldiers");
 		if(h.belongToArmy == false){
 			ArmedUnitSoldier recruit = new ArmedUnitSoldier(new MiddleAgeFactory(), "Complex", "rookie", this.defaultCanvas);
@@ -150,6 +164,14 @@ public class SoldiersOverlapRules extends OverlapRulesApplierDefaultImpl {
 	}
 	
 	public void overlapRule(ArmedUnitSquad a, SoldierWithSword s) {
+		if(a.getName().equals("My Team ")){
+			VisitorClassicCounter nbSoldiers = new VisitorClassicCounter();
+			a.accept(nbSoldiers);
+			nbLives = a.getHealthPoints();
+			System.out.println(nbLives);
+			setLife((int) nbLives);
+			score.setValue(score.getValue() + 1);
+		}
 		System.out.println("Recruiting Soldiers");
 		if(s.belongToArmy == false){
 			ArmedUnitSoldier recruit = new ArmedUnitSoldier(new MiddleAgeFactory(), "Complex", "rookie", this.defaultCanvas);
@@ -159,6 +181,14 @@ public class SoldiersOverlapRules extends OverlapRulesApplierDefaultImpl {
 	}
 	
 	public void overlapRule(ArmedUnitSquad a, SoldierWithShield s) {
+		if(a.getName().equals("My Team ")){
+			VisitorClassicCounter nbSoldiers = new VisitorClassicCounter();
+			a.accept(nbSoldiers);
+			nbLives = a.getHealthPoints(); ;
+			System.out.println(nbLives);
+			setLife((int) nbLives);
+			score.setValue(score.getValue() + 1);
+		}
 		if(a.getName().equals("My Team "))
 			score.setValue(score.getValue() + 1);
 		System.out.println("Recruiting Soldiers");
@@ -184,38 +214,31 @@ public class SoldiersOverlapRules extends OverlapRulesApplierDefaultImpl {
 			float strikeTmp = a2.strike();
 			a2.parry(a1.strike());
 			a1.parry(strikeTmp);
-
-			if(a1.getHealthPoints() <= 0){
-				if(a1.getName().equals("My Team ")){
-					setLife(life.getValue() - 1);
-					if(--nbLives>0)
-						a1.heal();
-					else{
-						universe.removeGameEntity(a1);
-						armyKilledHandler(a1);
-					}
-				}
-				else{
-					universe.removeGameEntity(a1);
-					armyKilledHandler(a1);
-				}
+			
+			if(a1.getName().equals("My Team ") ){
+				nbLives = a1.getHealthPoints();
+				System.out.println(nbLives);
+				setLife((int) nbLives);
+				
+			}
+			else{
+				 nbLives = a2.getHealthPoints();
+				 System.out.println(nbLives);
+				 setLife((int) nbLives);
 			}
 
+
+			if(a1.getHealthPoints() <= 0){
+				universe.removeGameEntity(a1);
+				armyKilledHandler(a1);
+			}
+		
+
 			if(a2.getHealthPoints() <= 0){
-				if(a2.getName().equals("My Team ")){
-					setLife(life.getValue() - 1);
-					if(--nbLives>0)
-						a2.heal();
-					else{
-						universe.removeGameEntity(a2);
-						armyKilledHandler(a2);
-					}
-				}
-				else{
 					universe.removeGameEntity(a2);
 					armyKilledHandler(a2);
 				}
-			}
+			
 		}
 
 		else{
@@ -225,6 +248,9 @@ public class SoldiersOverlapRules extends OverlapRulesApplierDefaultImpl {
 	
 	public void overlapRule(ArmedUnitSquad a1, Health h){
 		a1.heal();
+		nbLives = a1.getHealthPoints();
+		System.out.println(nbLives);
+		setLife((int) nbLives);
 		universe.removeGameEntity(h);
 		System.out.println("Healing " + a1.getName() + " " + a1.getHealthPoints());
 	}
@@ -261,7 +287,4 @@ public class SoldiersOverlapRules extends OverlapRulesApplierDefaultImpl {
 		vHealth.addElement(health);	
 	}
 
-	
-		
-	
 }

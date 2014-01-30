@@ -61,13 +61,13 @@ public class MyGameDefaultImpl implements Game, Observer {
 	public MyGameDefaultImpl() {
 		for (int i = 0; i < MAX_NUMBER_OF_PLAYER; ++i) {
 			score[i] = new ObservableValue<Integer>(0);
-			life[i] = new ObservableValue<Integer>(3);
-			timer_obs[i] = new ObservableValue<String>("3:00");
+			life[i] = new ObservableValue<Integer>(300);
+			timer_obs[i] = new ObservableValue<String>("0:00");
 		}
 		
-		lifeText = new Label("Lives:");
+		lifeText = new Label("Army Health:"); /*NOMBRE DE SOLDATS DANS L'ARMEE*/
 		scoreText = new Label("Score:");
-		timer = new Label("Time Left:"); /*AJOUT D'UN TIMER*/
+		timer = new Label("Time Elapsed:"); /*AJOUT D'UN TIMER*/
 		information = new Label("State:");
 		informationValue = new Label("Playing");
 		currentLevel = new Label("Level:");
@@ -179,7 +179,7 @@ public class MyGameDefaultImpl implements Game, Observer {
 			score[i].addObserver(this);
 			life[i].addObserver(this);
 			timer_obs[i].addObserver(this);
-			life[i].setValue(3);
+			life[i].setValue(300);
 			score[i].setValue(0);
 		}
 		levelNumber = 0;
